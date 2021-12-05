@@ -3,6 +3,7 @@ from typing import Dict, Union, List, Any, Set, Optional
 # from Trains.Admin.board_state import BoardState
 # from Trains.Admin.private_player_info import PrivatePlayerInfo
 # from Trains.Admin.private_player_info import card_counter_from_dict
+from Trains.Common.constants import CONNECTION
 from Trains.Common.map import City, Connection, Destination, Map, Color, sort_cities
 
 # from Trains.Common.player_game_state import PlayerGameState
@@ -82,6 +83,7 @@ class ConnectionsTranslation:
             and isinstance(acquired_json[2], str)
             and Color.string_to_color(acquired_json[2]) is not None
             and isinstance(acquired_json[3], int)
+            and acquired_json[3] in CONNECTION.LENGTHS
         )
 
     @staticmethod
@@ -115,7 +117,9 @@ class ConnectionsTranslation:
                 for color, length in color_length_map.items():
                     if not (
                         isinstance(color, str)
-                        and Color.color_to_enum(color) is not None
+                        and Color.string_to_color(color) is not None
+                        and isinstance(length, int)
+                        and length in CONNECTION.LENGTHS
                     ):
                         return False
         return True
@@ -181,7 +185,7 @@ class ConnectionsTranslation:
         for connection in connections:
             if not isinstance(connection, Connection):
                 raise TypeError("not given a set of connections")
-            city1, city2 = connection.get_cities()
+            city1, city2 = sort_cities(connection.get_cities())
             c1 = city1.get_name()
             c2 = city2.get_name()
             color = connection.get_color().value
@@ -349,7 +353,7 @@ class DestinationTranslation:
 #         if not isinstance(cards_json, dict):
 #             return False
 #         for color, count in cards_json.items():
-#             if Color.color_to_enum(color) is None:
+#             if Color.string_to_color(color) is None:
 #                 return False
 #             if not (isinstance(count, int) and count >= 0):
 #                 return False
@@ -516,7 +520,7 @@ class DestinationTranslation:
 #         destinations = {d1, d2}
 #
 #         num_rails = player_state_as_json[THIS][RAILS]
-#         cards = {Color.color_to_enum(color): num for color, num in player_state_as_json[THIS][CARDS].items()}
+#         cards = {Color.string_to_color(color): num for color, num in player_state_as_json[THIS][CARDS].items()}
 #
 #         board_game_state = BoardState(trains_map, connection_to_id)
 #         private_player_info = PrivatePlayerInfo(
