@@ -1,0 +1,4 @@
+#!/bin/bash
+export PYTHONPATH=$PYTHONPATH:`pwd`
+. Other/venv/bin/activate
+python -m pytest Tests

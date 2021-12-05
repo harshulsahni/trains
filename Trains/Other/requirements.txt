@@ -1,0 +1,4 @@
+black==21.9b0
+jsonstream
+pytest==6.2.5
+dataclasses
