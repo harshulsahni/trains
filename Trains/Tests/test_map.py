@@ -1,6 +1,6 @@
 import pytest
 
-from Trains.Common.map import City, Color, Destination
+from Trains.Common.map import City, Color, Connection, Destination
 
 
 class TestColor:
@@ -71,3 +71,36 @@ class TestDestination:
         assert Destination({nyc, boston}).__repr__() == "Destination from boston to nyc"
 
 
+class TestConnection:
+    @staticmethod
+    def test_bad_connections(boston: City, la: City):
+        with pytest.raises(ValueError):
+            Connection({boston, la}, length=3, color=1)
+        with pytest.raises(ValueError):
+            Connection({boston}, length=6, color=Color.RED)
+        with pytest.raises(ValueError):
+            Connection({boston}, length=3, color=Color.RED)
+        with pytest.raises(ValueError):
+            Connection([boston, la], length=3, color=Color.GREEN)
+        with pytest.raises(ValueError):
+            Connection(1, length=3, color=Color.GREEN)
+
+    @staticmethod
+    def test_getters(boston, la):
+        c = Connection({boston, la}, length=3, color=Color.RED)
+        assert c.get_cities() == {boston, la}
+        assert c.get_color() == Color.RED
+        assert c.get_length() == 3
+
+    @staticmethod
+    def test_equality(boston, la, nyc):
+        c = Connection({boston, la}, length=3, color=Color.RED)
+
+        assert c == Connection({boston, la}, length=3, color=Color.RED)
+        assert c != Connection({boston, la}, length=4, color=Color.RED)
+        assert c != Connection({boston, la}, length=3, color=Color.GREEN)
+        assert c != Connection({boston, nyc}, length=3, color=Color.RED)
+
+
+class TestMap:
+    pass
