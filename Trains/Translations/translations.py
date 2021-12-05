@@ -168,10 +168,9 @@ class ConnectionsTranslation:
         c2_from_cities = CityTranslation.find_city_from_str(c2_name, cities)
         c2 = c2_from_cities if c2_from_cities else City(c2_name, 0, 0)
 
-        return Connection(c1, c2, SegmentLength.length_to_enum(length), Color.color_to_enum(color_name))
+        return Connection({c1, c2}, length=length, color=Color.string_to_color(color_name))
 
     @staticmethod
-    # TODO: DOESN'T WORK WITH 1 CITY HAVING MULTIPLE CONNECTIONS
     def connections_to_json(connections: Set[Connection]) -> Dict[str, Dict[str, Dict[str, int]]]:
         """
         Turns a set of connections into the JSON representation for Connections.
@@ -182,10 +181,11 @@ class ConnectionsTranslation:
         for connection in connections:
             if not isinstance(connection, Connection):
                 raise TypeError("not given a set of connections")
-            c1 = connection.city_1.name
-            c2 = connection.city_2.name
-            color = connection.color.value
-            length = connection.num_rails.value
+            city1, city2 = connection.get_cities()
+            c1 = city1.get_name()
+            c2 = city2.get_name()
+            color = connection.get_color().value
+            length = connection.get_length()
 
             if c1 in output:
                 if c2 in output[c1]:
@@ -223,9 +223,8 @@ class ConnectionsTranslation:
                 city2 = city2_from_cities if city2_from_cities else City(city2_name, 0, 0)
 
                 for color_name, length in color_length_map.items():
-                    color = Color.color_to_enum(color_name)
-                    num_rails = SegmentLength.length_to_enum(length)
-                    output.add(Connection(city1, city2, num_rails, color))
+                    color = Color.string_to_color(color_name)
+                    output.add(Connection({city1, city2}, length=length, color=color))
 
         return output
 
@@ -274,7 +273,7 @@ class MapTranslation:
         }
 
     @staticmethod
-    def json_to_map(map_as_json: Dict[str, Union[int, List[str], Dict[str, Dict[str, Dict[str, int]]]]]) -> TrainsMap:
+    def json_to_map(map_as_json: Dict[str, Union[int, List[str], Dict[str, Dict[str, Dict[str, int]]]]]) -> Map:
         """
         Takes the JSON representation of a TrainsMap and turns it into a TrainsMap.
         Errors out if the JSON is not valid for a TrainsMap.
@@ -285,7 +284,7 @@ class MapTranslation:
         height = map_as_json[HEIGHT]
         cities = set([CityTranslation.json_to_city(c) for c in map_as_json[CITIES]])
         connections = ConnectionsTranslation.json_to_connections(map_as_json[CONNECTIONS], cities)
-        return TrainsMap(cities, connections, width, height)
+        return Map(cities, connections, width=width, height=height)
 
 
 class DestinationTranslation:
@@ -311,8 +310,8 @@ class DestinationTranslation:
         """
         if not isinstance(destination, Destination):
             raise ValueError("Input is not destination type.")
-        sorted_cities = sorted([destination.city_1, destination.city_2], key=lambda c: c.name)
-        return [sorted_cities[0].name, sorted_cities[1].name]
+        sorted_cities = sort_cities(destination.get_cities())
+        return [sorted_cities[0].get_name(), sorted_cities[1].get_name()]
 
     @staticmethod
     def json_to_destination(
@@ -337,7 +336,7 @@ class DestinationTranslation:
         city2_from_cities = CityTranslation.find_city_from_str(destination_as_json[1], cities)
         city2 = city2_from_cities if city2_from_cities else City(destination_as_json[1], 0, 0)
 
-        return Destination(city1, city2)
+        return Destination({city1, city2})
 
 
 # class PlayerStateTranslation:
