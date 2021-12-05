@@ -302,12 +302,16 @@ class Map:
         """
         Ensures heights and widths are within the max and min allowed.
         """
-        return (
+        if (
             isinstance(height, int)
             and isinstance(width, int)
             and MAP.MIN_WIDTH <= width <= MAP.MAX_WIDTH
             and MAP.MIN_HEIGHT <= height <= MAP.MAX_HEIGHT
-        )
+        ):
+            return height, width
+        else:
+            raise ValueError(f"Height must be an int between {MAP.MIN_HEIGHT} and {MAP.MAX_HEIGHT}. \n"
+                             f"Width must be an int between {MAP.MIN_WIDTH} and {MAP.MAX_WIDTH}. ")
 
     def __validate_cities(self, cities: Set[City]) -> Set[City]:
         """
@@ -400,7 +404,8 @@ class Map:
         for city in cities:
             all_cities_reachable_from_city = bfs(city, city_map)
             for city_neighbor in all_cities_reachable_from_city:
-                destinations.add(Destination({city, city_neighbor}))
+                if city_neighbor != city:
+                    destinations.add(Destination({city, city_neighbor}))
         return destinations
 
     def __make_city_map(self) -> Dict[City, Set[City]]:
@@ -422,5 +427,4 @@ class Map:
         :return:
         """
         return set([d.copy() for d in self.__destinations])
-
 

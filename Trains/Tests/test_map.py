@@ -1,6 +1,6 @@
 import pytest
 
-from Trains.Common.map import City, Color, Connection, Destination
+from Trains.Common.map import City, Color, Connection, Destination, Map
 
 
 class TestColor:
@@ -103,4 +103,65 @@ class TestConnection:
 
 
 class TestMap:
-    pass
+    @staticmethod
+    def test_bad_maps(la_island_map: Map):
+        with pytest.raises(ValueError):
+            Map(
+                la_island_map.get_cities(),
+                la_island_map.get_connections(),
+                height=800,
+                width=801
+            )
+        with pytest.raises(ValueError):
+            Map(
+                la_island_map.get_cities(),
+                la_island_map.get_connections(),
+                height=9,
+                width=700
+            )
+        with pytest.raises(ValueError):
+            Map(
+                1,
+                la_island_map.get_connections(),
+                height=800,
+                width=10
+            )
+        with pytest.raises(ValueError):
+            Map(
+                set(),
+                la_island_map.get_connections(),
+                height=800,
+                width=801
+            )
+        with pytest.raises(ValueError):
+            Map(
+                {"boston", "la"},
+                la_island_map.get_connections(),
+                height=800,
+                width=801
+            )
+
+    @staticmethod
+    def test_getters(
+        la_island_map: Map,
+        nyc_to_dc: Connection,
+        nyc_to_boston: Connection,
+        nyc: City,
+        boston: City,
+        la: City,
+        dc: City
+    ):
+        dests = {
+            Destination({nyc, boston}),
+            Destination({nyc, dc}),
+            Destination({dc, boston})
+        }
+        city_names = {
+            "boston", "nyc", "la", "dc"
+        }
+        assert la_island_map.get_width() == 800
+        assert la_island_map.get_height() == 700
+        assert la_island_map.get_connections() == {nyc_to_boston, nyc_to_dc}
+        assert la_island_map.get_cities() == {nyc, boston, la, dc}
+        assert la_island_map.get_destinations() == dests
+        assert la_island_map.get_city_names() == city_names
