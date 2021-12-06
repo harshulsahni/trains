@@ -1,5 +1,4 @@
-from collections import Set
-from typing import Dict, List
+from typing import Dict, List, Set
 
 from Trains.Common.constants import GAME
 from Trains.Common.map import Connection, Destination, Color, Map
@@ -12,7 +11,7 @@ class PlayerGameState:
         acquired_connections: Set[Connection],
         destinations: Set[Destination],
         num_rails: int,
-        cards: Dict[Color: int],
+        cards: Dict[Color, int],
         total_acquired_connections: List[Set[Connection]]
     ):
         """

@@ -1,6 +1,6 @@
 import pytest
 
-from Trains.Common.map import City, Connection, Color, Map
+from Trains.Common.map import City, Connection, Color, Map, Destination
 
 
 @pytest.fixture(name="boston")
@@ -45,3 +45,14 @@ def make_small_map(
     cities = {nyc, boston, la, dc}
     conns = {nyc_to_dc, nyc_to_boston}
     return Map(cities, conns, width=800, height=700)
+
+
+@pytest.fixture(name="choose_from_dests")
+def get_5_destinations(boston: City, nyc: City, la: City, dc: City):
+    return {
+        Destination({boston, nyc}),
+        Destination({boston, la}),
+        Destination({boston, dc}),
+        Destination({nyc, la}),
+        Destination({nyc, dc})
+    }

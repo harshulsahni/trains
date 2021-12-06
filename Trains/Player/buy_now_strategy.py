@@ -21,7 +21,7 @@ class BuyNowStrategy(IStrategy):
         If the player has legal connections they can acquire, acquire them.
         If not, ask for cards.
         """
-        sorted_legal_connections = sort_connections(set(pgs.get_all_obtainable_connections_for_player(self.__trains_map)))
+        sorted_legal_connections = sort_connections(set(pgs.get_all_obtainable_connections_for_player(self.trains_map)))
         if len(sorted_legal_connections) > 0:
             return ConnectionRequest(sorted_legal_connections[0])
         else:

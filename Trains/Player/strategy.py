@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import Counter
-from typing import List, Set, Optional
+from typing import List, Set, Optional, Any
 
 from Trains.Common.map import Map, Color, Destination, Connection
 from Trains.Common.player_game_state import PlayerGameState
@@ -35,6 +35,9 @@ class CardRequest(Move):
     def is_connection_request(self) -> bool:
         return False
 
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, CardRequest)
+
 
 class ConnectionRequest(Move):
     def __init__(self, c: Connection):
@@ -48,10 +51,19 @@ class ConnectionRequest(Move):
     def is_connection_request(self) -> bool:
         return True
 
+    def __eq__(self, other: Any) -> bool:
+        return (
+            isinstance(other, ConnectionRequest)
+            and other.get_connection() == self.__connection
+        )
+
+    def __hash__(self) -> int:
+        return hash(self.__connection)
+
 
 class IStrategy(ABC):
     def __init__(self):
-        self.__trains_map = None
+        self.trains_map = None
         self.num_rails = None
         self.cards = None
 
