@@ -257,3 +257,12 @@ class PlayerGameState:
             if self.can_acquire_connection(conn, trains_map):
                 obtainable_connections.add(conn)
         return obtainable_connections
+
+    def get_num_cards(self) -> int:
+        """
+        Get the total number of cards this player has.
+        """
+        output = 0
+        for count in self.__cards.values():
+            output += count
+        return output

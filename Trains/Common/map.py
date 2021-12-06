@@ -205,6 +205,14 @@ class Destination:
         return Destination(self.get_cities())
 
 
+def sort_destinations(destinations: Set[Destination]) -> List[Destination]:
+    """
+    Sort destinations based on:
+    (city1_name, city2_name).
+    """
+    return sorted(destinations, key=lambda d: tuple([c.get_name() for c in sort_cities(d.get_cities())]))
+
+
 class Connection:
     """
     Represents a Connection in the game, Trains.
@@ -288,6 +296,16 @@ class Connection:
     def copy(self) -> "Connection":
         cities = set([c.copy() for c in self.__cities])
         return Connection(cities, length=self.__length, color=self.__color)
+
+
+def sort_connections(connections: Set[Connection]) -> List[Connection]:
+    """
+    Sort connections based on:
+    (city1_name, city2_name, length, color).
+    """
+    return sorted(connections,
+                  key=lambda conn: tuple([c.get_name() for c in sort_cities(conn.get_cities())] +
+                                         [conn.get_length(), conn.get_color().value]))
 
 
 class Map:

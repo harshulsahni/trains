@@ -1,4 +1,4 @@
-from Trains.Common.map import City, sort_cities
+from Trains.Common.map import City, sort_cities, sort_destinations, Destination, sort_connections, Connection
 from Trains.Utils.utils import bfs
 
 
@@ -49,3 +49,28 @@ class TestBFS:
         result = bfs(root, mapping)
         assert result != if_undirected_expected
         assert result == directed_expected
+
+
+class TestSortDestinations:
+    @staticmethod
+    def test_sort_destinations_empty():
+        assert sort_destinations(set()) == []
+
+    @staticmethod
+    def test_sort_destinations(nyc: City, boston: City, dc: City):
+        d1 = Destination({nyc, boston})
+        d2 = Destination({nyc, dc})
+        d3 = Destination({dc, boston})
+        destinations = {d1, d2, d3}
+        expected = [d3, d1, d2]
+        assert sort_destinations(destinations) == expected
+
+
+class TestSortConnections:
+    @staticmethod
+    def test_sort_connections_empty():
+        assert sort_connections(set()) == []
+
+    @staticmethod
+    def test_sort_connections(nyc_to_boston: Connection, nyc_to_dc: Connection):
+        assert sort_connections({nyc_to_dc, nyc_to_boston}) == [nyc_to_boston, nyc_to_dc]
