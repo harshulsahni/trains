@@ -17,6 +17,13 @@ class Color(Enum):
     BLUE = "blue"
     WHITE = "white"
 
+    @staticmethod
+    def get_all_color_enums() -> Set["Color"]:
+        """
+        Get the enum of every possible Color in the game.
+        """
+        return {Color.RED, Color.GREEN, Color.BLUE, Color.WHITE}
+
     def get_hex(self) -> Optional[str]:
         """
         Returns a hex representation of the color, as a str.
@@ -423,8 +430,14 @@ class Map:
     def get_destinations(self) -> Set[Destination]:
         """
         Returns all destinations from this map.
-        A destination, in this context, is
-        :return:
+        A destination, in this context, is a pair of cities.
         """
         return set([d.copy() for d in self.__destinations])
 
+    def copy(self) -> "Map":
+        """
+        Return a deep copy of this Map.
+        """
+        cities = set([c.copy() for c in self.__cities])
+        conns = set([c.copy() for c in self.__connections])
+        return Map(cities, conns, height=self.__height, width=self.__width)
